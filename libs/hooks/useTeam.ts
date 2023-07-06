@@ -1,8 +1,12 @@
 import { axiosClient } from "api-client/axios-client";
-import { ContinentRes } from "models/apiWapper/continent";
+import { TeamRes } from "models/apiWapper/team";
 import useSWR from "swr";
 
-function useContinent() {
+interface TeamProps {
+  tourID?: string;
+}
+function useTeam(props: TeamProps) {
+  const { tourID } = props;
   const fetcher = async (url: string) => {
     return await axiosClient
       .get(url)
@@ -11,8 +15,8 @@ function useContinent() {
         if (error.response.status !== 200) throw error;
       });
   };
-  const { data, isLoading, error } = useSWR<[ContinentRes]>(
-    `/continent`,
+  const { data, isLoading, error } = useSWR<[TeamRes]>(
+    tourID ? `/team?tour-id=${tourID}` : "/team",
     fetcher
   );
   return {
@@ -21,4 +25,4 @@ function useContinent() {
     isError: error,
   };
 }
-export default useContinent;
+export default useTeam;

@@ -6,7 +6,7 @@ import Image from "next/image";
 import THSort from "components/table/headerTableSort";
 import useSWR from "swr";
 import { axiosClient } from "api-client/axios-client";
-import { PlayerSeasonRes } from "models/player/player";
+import { PlayerSeasonRes } from "models/apiWapper/player";
 
 type Props = {
   page: number;
@@ -28,7 +28,6 @@ export default function PlayerList(props: Props) {
     traitID: string,
     page: number
   ) => {
-    console.log("url = " + url);
     return await axiosClient
       .get(url[0], {
         params: {
@@ -49,7 +48,6 @@ export default function PlayerList(props: Props) {
     [`/player-season`, playerName, seasonID, teamID, traitID, page],
     fetcher
   );
-  console.log(data);
 
   return (
     <Table responsive bordered hover>

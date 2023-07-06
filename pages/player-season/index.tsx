@@ -1,8 +1,6 @@
-import React from "react";
-import { NextPageWithLayout, Resource } from "models/comon";
-import MainLayout from "layout/main";
-import About from "pages/about";
 import PlayerList from "components/player/playerList";
+import MainLayout from "layout/main";
+import { NextPageWithLayout } from "models/comon";
 
 const PlayerPage: NextPageWithLayout = () => {
   return (
@@ -14,7 +12,6 @@ const PlayerPage: NextPageWithLayout = () => {
         teamID={""}
         traitID={""}
       />
-      <About></About>
     </>
   );
 };

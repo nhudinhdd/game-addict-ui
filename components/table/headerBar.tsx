@@ -14,7 +14,7 @@ export function HeaderBar(props: HeaderBar) {
         name="search"
       />
       <button
-        className="rounded-xl	h-10 w-32 bg-blue-500 font-bold text-white"
+        className="rounded-xl	h-auto w-32 bg-blue-500 font-bold text-white"
         onClick={addModal}
       >
         {nameAddButton}

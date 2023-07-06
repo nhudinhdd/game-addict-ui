@@ -1,14 +1,16 @@
 import { axiosAuth, axiosClient } from "api-client/axios-client";
 import { ContinentRes } from "models/apiWapper/continent";
+import { TournamentRes } from "models/apiWapper/tournament";
 import { Form } from "react-bootstrap";
 import useSWR from "swr";
 
-interface Continent {
-  continentID?: string;
-  handlerContientForms?: () => void;
+interface TounamentProps {
+  tournamentID?: string;
+  handlerForms?: () => void;
 }
-export function ContinentForm(props: Continent) {
-  const { continentID, handlerContientForms } = props;
+export function TournamentForm(props: TounamentProps) {
+  const { tournamentID, handlerForms } = props;
+
   const fetcher = async (url: string) => {
     return await axiosClient
       .get(url)
@@ -17,38 +19,35 @@ export function ContinentForm(props: Continent) {
         if (error.response.status !== 200) throw error;
       });
   };
-  const { data } = useSWR(
-    continentID ? `/continent/${continentID}` : null,
+  const { data } = useSWR<TournamentRes>(
+    tournamentID ? `/tour/${tournamentID}` : null,
     fetcher
   );
 
-  const insertContinent = async (continentName: string) => {
+  const insertContinent = async (tourName: string) => {
     const res = await axiosAuth
-      .post(`/management/continent`, {
-        continentName: continentName,
+      .post(`/management/tour`, {
+        tourName: tourName,
       })
       .then((res) => res.data.data);
     return res;
   };
 
-  const updateContinent = async (
-    continentID: string,
-    continentName: string
-  ) => {
+  const updateContinent = async (tourID: string, tourName: string) => {
     const res = await axiosAuth
-      .put(`/management/continent/${continentID}`, {
-        continentName: continentName,
+      .put(`/management/tour/${tourID}`, {
+        tourName: tourName,
       })
       .then((res) => res.data.data);
     return res;
   };
   const handlerSubmitContinent = async (e) => {
     const values = e.target;
-    const continentID = values.continentID.value;
-    const continentName = values.continentName.value;
+    const tourID = values.tourID.value;
+    const tourName = values.tourName.value;
     const res = data
-      ? updateContinent(continentID, continentName)
-      : insertContinent(continentName);
+      ? updateContinent(tourID, tourName)
+      : insertContinent(tourName);
     return res;
   };
   return (
@@ -58,7 +57,7 @@ export function ContinentForm(props: Continent) {
         tabIndex={-1}
         aria-hidden="true"
         className="fixed top-0 left-0 right-0 bottom-0 z-1100 w-full max-h-full pl-64  flex flex-col flex-grow place-content-center bg-slate-700 bg-opacity-25"
-        onClick={handlerContientForms}
+        onClick={handlerForms}
       >
         <div
           className="relative w-full max-w-2xl m-auto max-h-full"
@@ -70,13 +69,13 @@ export function ContinentForm(props: Continent) {
           <div className="relative  rounded-lg shadow bg-slate-50">
             <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
               <h3 className="text-xl font-semibold text-gray-900">
-                Continent Form
+                Tournament Form
               </h3>
               <button
                 type="button"
                 className="text-gray-400  hover:text-slate-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:text-slate-900"
                 data-modal-hide="defaultModal"
-                onClick={handlerContientForms}
+                onClick={handlerForms}
               >
                 <svg
                   aria-hidden="true"
@@ -99,26 +98,26 @@ export function ContinentForm(props: Continent) {
                 <div className="pl-10 pt-4 pr-10">
                   <div className="flex-col">
                     <div>
-                      <label className="font-bold">Continent ID *</label>
+                      <label className="font-bold">Tournament ID *</label>
                     </div>
                     <div>
                       <input
                         className="border-slate-400 w-full border-solid border-b-2"
-                        defaultValue={data?.continentID}
+                        defaultValue={data?.tourID}
                         disabled
-                        name="continentID"
+                        name="tourID"
                       ></input>
                     </div>
                   </div>
                   <div className="mt-4 flex-col">
                     <div>
-                      <label className="font-bold">Continent Name *</label>
+                      <label className="font-bold">Tournament Name *</label>
                     </div>
                     <div>
                       <input
                         className="border-slate-400 w-full border-solid border-b-2"
-                        name="continentName"
-                        defaultValue={data?.continentName}
+                        name="tourName"
+                        defaultValue={data?.tourName}
                       ></input>
                     </div>
                   </div>

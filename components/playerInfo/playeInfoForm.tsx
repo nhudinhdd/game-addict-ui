@@ -1,17 +1,22 @@
 import { axiosAuth, axiosClient } from "api-client/axios-client";
 import { ContinentSelect } from "components/continent/continentSelect";
-import { NationRes } from "models/apiWapper/nation";
-import { useState } from "react";
+import { NationSelect } from "components/nation/nationSelect";
+import { PlayerInfoRes } from "models/apiWapper/playerInfo";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-interface NationFormProps {
-  nationID?: string;
+interface PlayerInfoFormProps {
+  playerInfoID?: string;
   handlerForms?: () => void;
 }
-export function NationForm(props: NationFormProps) {
-  const { nationID, handlerForms } = props;
+export function PlayerInfoForm(props: PlayerInfoFormProps) {
+  const { playerInfoID, handlerForms } = props;
+  const [nationID, setNationID] = useState("");
   const [continentID, setContinentID] = useState("");
-  const [fileUpload, setFileUpload] = useState(null);
+  const [birthday, setBirthday] = useState(new Date());
+
   const fetcher = async (url: string) => {
     return await axiosClient
       .get(url)
@@ -20,54 +25,43 @@ export function NationForm(props: NationFormProps) {
         if (error.response.status !== 200) throw error;
       });
   };
-  const { data } = useSWR<NationRes>(
-    nationID ? `/nation/detail/${nationID}` : null,
+  const { data, isLoading } = useSWR<PlayerInfoRes>(
+    playerInfoID ? `/player-info/${playerInfoID}` : null,
     fetcher
   );
 
-  const handlerFile = (e) => {
-    setFileUpload(e.target.files[0]);
-  };
+  useEffect(() => {
+    setBirthday(data ? new Date(data.birthDay) : new Date());
+  }, [isLoading]);
   const getFormData = (e) => {
     const values = e.target;
     const formData = new FormData();
-    formData.append("nationID", values.nationID.value);
-    formData.append("continentID", continentID);
-    formData.append("nationName", values.nationName.value);
-    formData.append("ensignLogo", fileUpload);
-    formData.append("altEnsign", values.altEnsign.value);
-    formData.append("titleEnsign", values.titleEnsign.value);
-    formData.append("captionEnsign", values.captionEnsign.value);
+    formData.append("nationID", nationID);
+    formData.append("firstName", values.firstName.value);
+    formData.append("lastName", values.lastName.value);
+    formData.append("birthday", values.birthday.value);
+    formData.append("playerStory", values.playerStory.value);
     return formData;
   };
 
   const insert = async (e) => {
     const formData = getFormData(e);
     const res = await axiosAuth
-      .post(`/management/nation`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
+      .post(`/management/player-info`, formData)
       .then((res) => res.data.data);
     return res;
   };
 
-  const update = async (nationID: string, e) => {
+  const update = async (playerInfoID: string, e) => {
     const formData = getFormData(e);
     const res = await axiosAuth
-      .put(`/management/nation/${nationID}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
+      .put(`/management/player-info/${playerInfoID}`, formData)
       .then((res) => res.data.data);
     return res;
   };
   const handlerSubmit = (e) => {
     const values = e.target;
-    const res = data ? update(values.nationID.value, e) : insert(e);
-    return res;
+    const res = data ? update(values.playerInfoID.value, e) : insert(e);
   };
   return (
     <div>
@@ -87,7 +81,7 @@ export function NationForm(props: NationFormProps) {
           <div className="relative  rounded-lg shadow bg-slate-50">
             <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
               <h3 className="text-xl font-semibold text-gray-900">
-                Nation Form
+                Player Info Form
               </h3>
               <button
                 type="button"
@@ -112,90 +106,79 @@ export function NationForm(props: NationFormProps) {
               </button>
             </div>
             <div className="p-6 space-y-6">
-              <form name="nationForm" onSubmit={handlerSubmit}>
+              <form name="playerInfoForm" onSubmit={handlerSubmit}>
                 <div className="pl-10 mt-4 pr-10">
                   <div className="flex-col">
                     <div>
-                      <label className="font-bold">NationID *</label>
+                      <label className="font-bold">Player Info ID *</label>
                     </div>
                     <div>
                       <input
                         className="border-slate-400 w-full border-solid border-b-2"
-                        defaultValue={data?.nationID}
+                        defaultValue={data?.playerID}
                         disabled
-                        name="nationID"
+                        name="playerInfoID"
                       ></input>
                     </div>
                   </div>
                   <div className="mt-4">
-                    <ContinentSelect
-                      setContinentID={setContinentID}
-                      continentID={data?.continentID}
+                    <ContinentSelect setContinentID={setContinentID} />
+                  </div>
+                  <div className="mt-4">
+                    <NationSelect
+                      continentID={continentID}
+                      setNationID={setNationID}
                     />
                   </div>
-
                   <div className="mt-4 flex-col">
                     <div>
-                      <label className="font-bold">Nation Name *</label>
+                      <label className="font-bold">Frist Name*</label>
                     </div>
                     <div>
                       <input
                         className="border-slate-400 w-full border-solid border-b-2"
-                        name="nationName"
-                        defaultValue={data?.nationName}
+                        name="firstName"
+                        defaultValue={data?.firstName}
                       ></input>
                     </div>
                   </div>
                   <div className="mt-4 flex-col">
                     <div>
-                      <label className="font-bold">Ensign *</label>
+                      <label className="font-bold">Last Name*</label>
                     </div>
-                    <div className="pl-4">
-                      <div>
-                        <input
-                          accept="*"
-                          type="file"
-                          name="attachedFile"
-                          id="fileInput"
-                          onChange={(e) => handlerFile(e)}
-                        ></input>
-                      </div>
-                      <div>
-                        <div className="mt-4 flex-col">
-                          <label className="font-bold">Description</label>
-                        </div>
-                        <div>
-                          <input
-                            className="border-slate-400 w-full border-solid border-b-2"
-                            name="altEnsign"
-                            defaultValue={data?.altEnsign}
-                          ></input>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="mt-4 flex-col">
-                          <label className="font-bold">Title</label>
-                        </div>
-                        <div>
-                          <input
-                            className="border-slate-400 w-full border-solid border-b-2"
-                            name="titleEnsign"
-                            defaultValue={data?.titleEnsign}
-                          ></input>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="mt-4 flex-col">
-                          <label className="font-bold">Caption</label>
-                        </div>
-                        <div>
-                          <input
-                            className="border-slate-400 w-full border-solid border-b-2"
-                            name="captionEnsign"
-                            defaultValue={data?.captionEnsign}
-                          ></input>
-                        </div>
-                      </div>
+                    <div>
+                      <input
+                        className="border-slate-400 w-full border-solid border-b-2"
+                        name="lastName"
+                        defaultValue={data?.lastName}
+                      ></input>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex-col">
+                    <div>
+                      <label className="font-bold">Birthday*</label>
+                    </div>
+                    <div>
+                      <DatePicker
+                        selected={birthday}
+                        onChange={(date) => setBirthday(date)}
+                        dateFormat="yyyy/MM/dd"
+                        name="birthday"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex-col">
+                    <div>
+                      <label className="font-bold">Player story*</label>
+                    </div>
+                    <div>
+                      <textarea
+                        className="border-slate-400 w-full border-solid border-b-2 h-28"
+                        name="playerStory"
+                        defaultValue={data?.playerStory}
+                      ></textarea>
                     </div>
                   </div>
                 </div>

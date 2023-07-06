@@ -1,16 +1,16 @@
 import { axiosAuth, axiosClient } from "api-client/axios-client";
-import { ContinentSelect } from "components/continent/continentSelect";
-import { NationRes } from "models/apiWapper/nation";
+import { TournamentSelect } from "components/tournament/tournamentSelect";
+import { TeamRes } from "models/apiWapper/team";
 import { useState } from "react";
 import useSWR from "swr";
 
-interface NationFormProps {
-  nationID?: string;
+interface TeamFormProps {
+  teamID?: string;
   handlerForms?: () => void;
 }
-export function NationForm(props: NationFormProps) {
-  const { nationID, handlerForms } = props;
-  const [continentID, setContinentID] = useState("");
+export function TeamForm(props: TeamFormProps) {
+  const { teamID, handlerForms } = props;
+  const [tournamentID, setTournamentID] = useState("");
   const [fileUpload, setFileUpload] = useState(null);
   const fetcher = async (url: string) => {
     return await axiosClient
@@ -20,10 +20,7 @@ export function NationForm(props: NationFormProps) {
         if (error.response.status !== 200) throw error;
       });
   };
-  const { data } = useSWR<NationRes>(
-    nationID ? `/nation/detail/${nationID}` : null,
-    fetcher
-  );
+  const { data } = useSWR<TeamRes>(teamID ? `/team/${teamID}` : null, fetcher);
 
   const handlerFile = (e) => {
     setFileUpload(e.target.files[0]);
@@ -31,20 +28,19 @@ export function NationForm(props: NationFormProps) {
   const getFormData = (e) => {
     const values = e.target;
     const formData = new FormData();
-    formData.append("nationID", values.nationID.value);
-    formData.append("continentID", continentID);
-    formData.append("nationName", values.nationName.value);
-    formData.append("ensignLogo", fileUpload);
-    formData.append("altEnsign", values.altEnsign.value);
-    formData.append("titleEnsign", values.titleEnsign.value);
-    formData.append("captionEnsign", values.captionEnsign.value);
+    formData.append("tourID", tournamentID);
+    formData.append("teamName", values.teamName.value);
+    formData.append("teamLogoFile", fileUpload);
+    formData.append("altLogo", values.altLogo.value);
+    formData.append("titleLogo", values.titleLogo.value);
+    formData.append("captionLogo", values.captionLogo.value);
     return formData;
   };
 
   const insert = async (e) => {
     const formData = getFormData(e);
     const res = await axiosAuth
-      .post(`/management/nation`, formData, {
+      .post(`/management/team`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -53,10 +49,10 @@ export function NationForm(props: NationFormProps) {
     return res;
   };
 
-  const update = async (nationID: string, e) => {
+  const update = async (teamID: string, e) => {
     const formData = getFormData(e);
     const res = await axiosAuth
-      .put(`/management/nation/${nationID}`, formData, {
+      .put(`/management/team/${teamID}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -66,7 +62,7 @@ export function NationForm(props: NationFormProps) {
   };
   const handlerSubmit = (e) => {
     const values = e.target;
-    const res = data ? update(values.nationID.value, e) : insert(e);
+    const res = data ? update(values.teamID.value, e) : insert(e);
     return res;
   };
   return (
@@ -86,9 +82,7 @@ export function NationForm(props: NationFormProps) {
         >
           <div className="relative  rounded-lg shadow bg-slate-50">
             <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-              <h3 className="text-xl font-semibold text-gray-900">
-                Nation Form
-              </h3>
+              <h3 className="text-xl font-semibold text-gray-900">Team Form</h3>
               <button
                 type="button"
                 className="text-gray-400  hover:text-slate-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:text-slate-900"
@@ -116,21 +110,21 @@ export function NationForm(props: NationFormProps) {
                 <div className="pl-10 mt-4 pr-10">
                   <div className="flex-col">
                     <div>
-                      <label className="font-bold">NationID *</label>
+                      <label className="font-bold">Team ID *</label>
                     </div>
                     <div>
                       <input
                         className="border-slate-400 w-full border-solid border-b-2"
-                        defaultValue={data?.nationID}
+                        defaultValue={data?.teamID}
                         disabled
-                        name="nationID"
+                        name="teamID"
                       ></input>
                     </div>
                   </div>
                   <div className="mt-4">
-                    <ContinentSelect
-                      setContinentID={setContinentID}
-                      continentID={data?.continentID}
+                    <TournamentSelect
+                      setTournamentID={setTournamentID}
+                      tourID={data?.tournamentRes.tourID}
                     />
                   </div>
 
@@ -141,14 +135,14 @@ export function NationForm(props: NationFormProps) {
                     <div>
                       <input
                         className="border-slate-400 w-full border-solid border-b-2"
-                        name="nationName"
-                        defaultValue={data?.nationName}
+                        name="teamName"
+                        defaultValue={data?.teamName}
                       ></input>
                     </div>
                   </div>
                   <div className="mt-4 flex-col">
                     <div>
-                      <label className="font-bold">Ensign *</label>
+                      <label className="font-bold">Logo *</label>
                     </div>
                     <div className="pl-4">
                       <div>
@@ -167,8 +161,8 @@ export function NationForm(props: NationFormProps) {
                         <div>
                           <input
                             className="border-slate-400 w-full border-solid border-b-2"
-                            name="altEnsign"
-                            defaultValue={data?.altEnsign}
+                            name="altLogo"
+                            defaultValue={data?.altLogo}
                           ></input>
                         </div>
                       </div>
@@ -179,8 +173,8 @@ export function NationForm(props: NationFormProps) {
                         <div>
                           <input
                             className="border-slate-400 w-full border-solid border-b-2"
-                            name="titleEnsign"
-                            defaultValue={data?.titleEnsign}
+                            name="titleLogo"
+                            defaultValue={data?.titleLogo}
                           ></input>
                         </div>
                       </div>
@@ -191,8 +185,8 @@ export function NationForm(props: NationFormProps) {
                         <div>
                           <input
                             className="border-slate-400 w-full border-solid border-b-2"
-                            name="captionEnsign"
-                            defaultValue={data?.captionEnsign}
+                            name="captionLogo"
+                            defaultValue={data?.captionLogo}
                           ></input>
                         </div>
                       </div>

@@ -3,32 +3,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import THSort from "components/table/headerTableSort";
-import useSWR from "swr";
-import { axiosClient } from "api-client/axios-client";
-import { ContinentRes } from "models/apiWapper/continent";
+import useTournament from "libs/hooks/useTournament";
 
 type Props = {
-  contientName: string;
-  handlerContientForms: () => void;
-  setIDContinent: (id: string) => void;
+  tourName: string;
+  handlerForms: () => void;
+  setTournamentID: (id: string) => void;
 };
 
-export default function ContinentList(props: Props) {
-  const { contientName, handlerContientForms, setIDContinent } = props;
+export default function TournamentList(props: Props) {
+  const { tourName, handlerForms, setTournamentID } = props;
   const handlerCallBack = (id: string) => {
-    handlerContientForms();
-    setIDContinent(id);
+    handlerForms();
+    setTournamentID(id);
   };
-  const fetcher = async (url: string, contientName: string) => {
-    return await axiosClient
-      .get(url)
-      .then((res) => res.data.data)
-      .catch((error) => {
-        if (error.response.status !== 200) throw error;
-      });
-  };
-
-  const { data } = useSWR<[ContinentRes]>(`/continent`, fetcher);
+  const { data } = useTournament();
 
   return (
     <Table responsive bordered hover>
@@ -37,22 +26,22 @@ export default function ContinentList(props: Props) {
           <th>
             <THSort name="ID">#</THSort>
           </th>
-          <th>Contient Name</th>
+          <th>Tournament Name</th>
           <th aria-label="Action" />
         </tr>
       </thead>
       <tbody>
-        {data?.map((continent) => (
-          <tr key={continent.continentID}>
-            <td>{continent.continentID}</td>
-            <td>{continent.continentName}</td>
+        {data?.map((tour) => (
+          <tr key={tour.tourID}>
+            <td>{tour.tourID}</td>
+            <td>{tour.tourName}</td>
             <td>
               <Dropdown align="end">
                 <Dropdown.Toggle
                   as="button"
                   bsPrefix="btn"
                   className="btn-link rounded-0 text-black-50 shadow-none p-0"
-                  id={`action-${continent.continentID}`}
+                  id={`action-${tour.tourID}`}
                 >
                   <FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
                 </Dropdown.Toggle>
@@ -60,7 +49,7 @@ export default function ContinentList(props: Props) {
                   <Dropdown.Item href="#">Info</Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
-                      handlerCallBack(continent.continentID);
+                      handlerCallBack(tour.tourID);
                     }}
                   >
                     Edit

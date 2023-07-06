@@ -1,25 +1,22 @@
-import { Dropdown, Table } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import React from "react";
-import THSort from "components/table/headerTableSort";
-import useSWR from "swr";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { axiosClient } from "api-client/axios-client";
-import { ContinentRes } from "models/apiWapper/continent";
+import THSort from "components/table/headerTableSort";
+import { PlayerTeamRes } from "models/apiWapper/playerTeam";
+import Image from "next/image";
+import { Dropdown, Table } from "react-bootstrap";
+import useSWR from "swr";
 
 type Props = {
-  contientName: string;
-  handlerContientForms: () => void;
-  setIDContinent: (id: string) => void;
+  playerID?: string;
+  teamID?: string;
+  handlerForms: () => void;
+  updateID: (playerTeamID: string, playerID: string, teamID: string) => void;
 };
 
-export default function ContinentList(props: Props) {
-  const { contientName, handlerContientForms, setIDContinent } = props;
-  const handlerCallBack = (id: string) => {
-    handlerContientForms();
-    setIDContinent(id);
-  };
-  const fetcher = async (url: string, contientName: string) => {
+export default function PlayerTeamList(props: Props) {
+  const { playerID, teamID, handlerForms, updateID } = props;
+  const fetcher = async (url: string) => {
     return await axiosClient
       .get(url)
       .then((res) => res.data.data)
@@ -27,8 +24,8 @@ export default function ContinentList(props: Props) {
         if (error.response.status !== 200) throw error;
       });
   };
-
-  const { data } = useSWR<[ContinentRes]>(`/continent`, fetcher);
+  const getNationUrl = `/player-team?player-id=${playerID}&team-id=${teamID}`;
+  const { data } = useSWR<[PlayerTeamRes]>(getNationUrl, fetcher);
 
   return (
     <Table responsive bordered hover>
@@ -37,22 +34,30 @@ export default function ContinentList(props: Props) {
           <th>
             <THSort name="ID">#</THSort>
           </th>
-          <th>Contient Name</th>
+          <th>Player First Name</th>
+          <th>Player Last Name</th>
+          <th>Team</th>
+          <th>Start Year</th>
+          <th>End Year</th>
           <th aria-label="Action" />
         </tr>
       </thead>
       <tbody>
-        {data?.map((continent) => (
-          <tr key={continent.continentID}>
-            <td>{continent.continentID}</td>
-            <td>{continent.continentName}</td>
+        {data?.map((i) => (
+          <tr key={i.playerTeamID}>
+            <td>{i.playerTeamID}</td>
+            <td>{i.playerInfoRes.firstName}</td>
+            <td>{i.playerInfoRes.lastName}</td>
+            <td>{i.teamRes.teamName}</td>
+            <td>{i.startYear}</td>
+            <td>{i.endYear}</td>
             <td>
               <Dropdown align="end">
                 <Dropdown.Toggle
                   as="button"
                   bsPrefix="btn"
                   className="btn-link rounded-0 text-black-50 shadow-none p-0"
-                  id={`action-${continent.continentID}`}
+                  id={`action-${i.playerTeamID}`}
                 >
                   <FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
                 </Dropdown.Toggle>
@@ -60,7 +65,12 @@ export default function ContinentList(props: Props) {
                   <Dropdown.Item href="#">Info</Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
-                      handlerCallBack(continent.continentID);
+                      handlerForms();
+                      updateID(
+                        i.playerTeamID,
+                        i.playerInfoRes.playerID,
+                        i.teamRes.teamID
+                      );
                     }}
                   >
                     Edit

@@ -1,16 +1,15 @@
 import { axiosAuth, axiosClient } from "api-client/axios-client";
-import { ContinentSelect } from "components/continent/continentSelect";
-import { NationRes } from "models/apiWapper/nation";
+import { SeasonRes } from "models/apiWapper/season";
+import { TraitResponse } from "models/apiWapper/trait";
 import { useState } from "react";
 import useSWR from "swr";
 
-interface NationFormProps {
-  nationID?: string;
+interface SeasonFormProps {
+  seasonID?: string;
   handlerForms?: () => void;
 }
-export function NationForm(props: NationFormProps) {
-  const { nationID, handlerForms } = props;
-  const [continentID, setContinentID] = useState("");
+export function SeasonForm(props: SeasonFormProps) {
+  const { seasonID, handlerForms } = props;
   const [fileUpload, setFileUpload] = useState(null);
   const fetcher = async (url: string) => {
     return await axiosClient
@@ -20,31 +19,31 @@ export function NationForm(props: NationFormProps) {
         if (error.response.status !== 200) throw error;
       });
   };
-  const { data } = useSWR<NationRes>(
-    nationID ? `/nation/detail/${nationID}` : null,
+  const { data } = useSWR<SeasonRes>(
+    seasonID ? `/season/${seasonID}` : null,
     fetcher
   );
 
   const handlerFile = (e) => {
     setFileUpload(e.target.files[0]);
   };
+
   const getFormData = (e) => {
     const values = e.target;
     const formData = new FormData();
-    formData.append("nationID", values.nationID.value);
-    formData.append("continentID", continentID);
-    formData.append("nationName", values.nationName.value);
-    formData.append("ensignLogo", fileUpload);
-    formData.append("altEnsign", values.altEnsign.value);
-    formData.append("titleEnsign", values.titleEnsign.value);
-    formData.append("captionEnsign", values.captionEnsign.value);
+    formData.append("shortName", values.shortName.value);
+    formData.append("fullName", values.fullName.value);
+    formData.append("season-logo", fileUpload);
+    formData.append("altLogo", values.altLogo.value);
+    formData.append("titleLogo", values.titleLogo.value);
+    formData.append("captionLogo", values.captionLogo.value);
     return formData;
   };
 
   const insert = async (e) => {
     const formData = getFormData(e);
     const res = await axiosAuth
-      .post(`/management/nation`, formData, {
+      .post(`/management/season`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -53,10 +52,10 @@ export function NationForm(props: NationFormProps) {
     return res;
   };
 
-  const update = async (nationID: string, e) => {
+  const update = async (seasonID: string, e) => {
     const formData = getFormData(e);
     const res = await axiosAuth
-      .put(`/management/nation/${nationID}`, formData, {
+      .put(`/management/season/${seasonID}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -66,7 +65,7 @@ export function NationForm(props: NationFormProps) {
   };
   const handlerSubmit = (e) => {
     const values = e.target;
-    const res = data ? update(values.nationID.value, e) : insert(e);
+    const res = data ? update(values.seasonID.value, e) : insert(e);
     return res;
   };
   return (
@@ -87,7 +86,7 @@ export function NationForm(props: NationFormProps) {
           <div className="relative  rounded-lg shadow bg-slate-50">
             <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
               <h3 className="text-xl font-semibold text-gray-900">
-                Nation Form
+                Season Form
               </h3>
               <button
                 type="button"
@@ -116,39 +115,44 @@ export function NationForm(props: NationFormProps) {
                 <div className="pl-10 mt-4 pr-10">
                   <div className="flex-col">
                     <div>
-                      <label className="font-bold">NationID *</label>
+                      <label className="font-bold">Season ID *</label>
                     </div>
                     <div>
                       <input
                         className="border-slate-400 w-full border-solid border-b-2"
-                        defaultValue={data?.nationID}
+                        defaultValue={data?.seasonID}
                         disabled
-                        name="nationID"
+                        name="seasonID"
                       ></input>
                     </div>
                   </div>
-                  <div className="mt-4">
-                    <ContinentSelect
-                      setContinentID={setContinentID}
-                      continentID={data?.continentID}
-                    />
-                  </div>
-
                   <div className="mt-4 flex-col">
                     <div>
-                      <label className="font-bold">Nation Name *</label>
+                      <label className="font-bold">Short Name *</label>
                     </div>
                     <div>
                       <input
                         className="border-slate-400 w-full border-solid border-b-2"
-                        name="nationName"
-                        defaultValue={data?.nationName}
+                        name="shortName"
+                        defaultValue={data?.shortName}
                       ></input>
                     </div>
                   </div>
                   <div className="mt-4 flex-col">
                     <div>
-                      <label className="font-bold">Ensign *</label>
+                      <label className="font-bold">Full Name *</label>
+                    </div>
+                    <div>
+                      <input
+                        className="border-slate-400 w-full border-solid border-b-2"
+                        name="fullName"
+                        defaultValue={data?.fullName}
+                      ></input>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex-col">
+                    <div>
+                      <label className="font-bold">Logo *</label>
                     </div>
                     <div className="pl-4">
                       <div>
@@ -162,37 +166,37 @@ export function NationForm(props: NationFormProps) {
                       </div>
                       <div>
                         <div className="mt-4 flex-col">
-                          <label className="font-bold">Description</label>
+                          <label className="font-bold">Description Logo</label>
                         </div>
                         <div>
                           <input
                             className="border-slate-400 w-full border-solid border-b-2"
-                            name="altEnsign"
-                            defaultValue={data?.altEnsign}
+                            name="altLogo"
+                            defaultValue={data?.altLogoSeason}
                           ></input>
                         </div>
                       </div>
                       <div>
                         <div className="mt-4 flex-col">
-                          <label className="font-bold">Title</label>
+                          <label className="font-bold">Title Logo</label>
                         </div>
                         <div>
                           <input
                             className="border-slate-400 w-full border-solid border-b-2"
-                            name="titleEnsign"
-                            defaultValue={data?.titleEnsign}
+                            name="titleLogo"
+                            defaultValue={data?.titleLogoSeason}
                           ></input>
                         </div>
                       </div>
                       <div>
                         <div className="mt-4 flex-col">
-                          <label className="font-bold">Caption</label>
+                          <label className="font-bold">Caption Logo</label>
                         </div>
                         <div>
                           <input
                             className="border-slate-400 w-full border-solid border-b-2"
-                            name="captionEnsign"
-                            defaultValue={data?.captionEnsign}
+                            name="captionLogo"
+                            defaultValue={data?.captionLogoSeason}
                           ></input>
                         </div>
                       </div>

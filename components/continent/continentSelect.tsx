@@ -1,6 +1,5 @@
 import useContinent from "libs/hooks/useCotinent";
-import { ContinentRes } from "models/continent/continent";
-import useSWR from "swr";
+import { useEffect, useState } from "react";
 
 interface ContinentSelectProps {
   setContinentID: (id: string) => void;
@@ -8,9 +7,17 @@ interface ContinentSelectProps {
 }
 export function ContinentSelect(props: ContinentSelectProps) {
   const { setContinentID, continentID } = props;
-  const { data } = useContinent();
-  console.log("test");
-
+  const { data, isLoading } = useContinent();
+  const [valueSelect, setValueSelect] = useState("");
+  useEffect(() => {
+    if (valueSelect) setContinentID(valueSelect);
+    else {
+      setContinentID(continentID);
+    }
+  });
+  if (isLoading) {
+    return null;
+  }
   return (
     <div className="flex-row mb-3">
       <div className="mb-3">
@@ -21,9 +28,9 @@ export function ContinentSelect(props: ContinentSelectProps) {
       <div>
         <select
           name="contientSelect"
-          defaultValue={continentID ? continentID : ""}
+          defaultValue={continentID}
           onChange={(e) => {
-            setContinentID(e.target.value);
+            setValueSelect(e.target.value);
           }}
           className="border-2 border-slate-600 rounded-lg h-8"
         >

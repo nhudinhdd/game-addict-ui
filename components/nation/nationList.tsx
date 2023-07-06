@@ -6,7 +6,7 @@ import Image from "next/image";
 import THSort from "components/table/headerTableSort";
 import useSWR from "swr";
 import { axiosClient } from "api-client/axios-client";
-import { NationRes } from "models/nation/nation";
+import { NationRes } from "models/apiWapper/nation";
 
 type Props = {
   continentID?: string;
@@ -58,7 +58,7 @@ export default function NationList(props: Props) {
                 <Image
                   fill
                   style={{ objectFit: "contain" }}
-                  alt=""
+                  alt={nation.altEnsign}
                   sizes="5vw"
                   src={nation.ensign}
                 />

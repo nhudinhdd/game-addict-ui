@@ -147,7 +147,8 @@ export default function SidebarNav() {
     <ul className="list-unstyled">
       <SidebarNavGroup toggleIcon={faFutbol} toggleText="Player Manager">
         <SidebarNavItem href="/player-season">Player Season</SidebarNavItem>
-        <SidebarNavItem href="/player">Player Info</SidebarNavItem>
+        <SidebarNavItem href="/player-info">Player Info</SidebarNavItem>
+        <SidebarNavItem href="/player-team">Player Team</SidebarNavItem>
         <SidebarNavItem href="/continent">Continent</SidebarNavItem>
         <SidebarNavItem href="/nation">Nation</SidebarNavItem>
         <SidebarNavItem href="/tournament">Tournament</SidebarNavItem>

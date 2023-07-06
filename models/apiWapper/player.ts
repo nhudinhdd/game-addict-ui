@@ -1,4 +1,5 @@
-import { NationRes } from "models/nation/nation";
+import { PlayerInfoRes } from "./playerInfo";
+import { SeasonRes } from "./season";
 
 export interface PlayerSeasonRes {
   playerSeasonID?: string;
@@ -23,22 +24,4 @@ export interface PlayerSeasonRes {
   altAvatar?: string;
   titleAvatar?: string;
   captionAvatar?: string;
-}
-
-export interface SeasonRes {
-  seasonID?: string;
-  shortName?: string;
-  fullName?: string;
-  logo?: string;
-  altLogoSeason?: string;
-  titleLogoSeason?: string;
-  captionLogoSeason?: string;
-}
-
-export interface PlayerInfoRes {
-  playerID?: string;
-  nationRes?: NationRes;
-  firstName?: string;
-  lastName?: string;
-  birthDay?: string;
 }

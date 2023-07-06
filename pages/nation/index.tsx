@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { NextPageWithLayout } from "models/comon";
-import MainLayout from "layout/main";
-import { ContinentForm } from "components/continent/continentForm";
-import NationList from "components/nation/nationList";
-import { HeaderBar } from "components/table/headerBar";
 import { ContinentSelect } from "components/continent/continentSelect";
 import { NationForm } from "components/nation/nationForm";
+import NationList from "components/nation/nationList";
+import { HeaderBar } from "components/table/headerBar";
+import MainLayout from "layout/main";
+import { NextPageWithLayout } from "models/comon";
+import { useState } from "react";
 
 const Nation: NextPageWithLayout = () => {
   const [isShowContinent, setIsShowContinent] = useState(false);

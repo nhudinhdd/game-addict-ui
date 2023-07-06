@@ -1,8 +1,13 @@
 import { axiosClient } from "api-client/axios-client";
 import { ContinentRes } from "models/apiWapper/continent";
+import { NationRes } from "models/apiWapper/nation";
 import useSWR from "swr";
 
-function useContinent() {
+interface NationSelectProps {
+  continentID?: string;
+}
+function useNation(props: NationSelectProps) {
+  const { continentID } = props;
   const fetcher = async (url: string) => {
     return await axiosClient
       .get(url)
@@ -11,8 +16,8 @@ function useContinent() {
         if (error.response.status !== 200) throw error;
       });
   };
-  const { data, isLoading, error } = useSWR<[ContinentRes]>(
-    `/continent`,
+  const { data, isLoading, error } = useSWR<[NationRes]>(
+    continentID ? `/nation/list?continent-id=${continentID}` : "/nation/list",
     fetcher
   );
   return {
@@ -21,4 +26,4 @@ function useContinent() {
     isError: error,
   };
 }
-export default useContinent;
+export default useNation;

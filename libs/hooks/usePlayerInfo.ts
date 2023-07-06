@@ -1,8 +1,8 @@
 import { axiosClient } from "api-client/axios-client";
-import { ContinentRes } from "models/apiWapper/continent";
+import { PlayerInfoRes } from "models/apiWapper/playerInfo";
 import useSWR from "swr";
 
-function useContinent() {
+function usePlayerInfo() {
   const fetcher = async (url: string) => {
     return await axiosClient
       .get(url)
@@ -11,8 +11,8 @@ function useContinent() {
         if (error.response.status !== 200) throw error;
       });
   };
-  const { data, isLoading, error } = useSWR<[ContinentRes]>(
-    `/continent`,
+  const { data, isLoading, error } = useSWR<[PlayerInfoRes]>(
+    "/player-info?page=-1",
     fetcher
   );
   return {
@@ -21,4 +21,4 @@ function useContinent() {
     isError: error,
   };
 }
-export default useContinent;
+export default usePlayerInfo;

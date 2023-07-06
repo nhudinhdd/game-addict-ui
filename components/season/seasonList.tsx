@@ -3,32 +3,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import THSort from "components/table/headerTableSort";
-import useSWR from "swr";
-import { axiosClient } from "api-client/axios-client";
-import { ContinentRes } from "models/apiWapper/continent";
+import Image from "next/image";
+import useSeason from "libs/hooks/useSeason";
 
 type Props = {
-  contientName: string;
-  handlerContientForms: () => void;
-  setIDContinent: (id: string) => void;
+  seasonName: string;
+  handlerForms: () => void;
+  setSeasonID: (id: string) => void;
 };
 
-export default function ContinentList(props: Props) {
-  const { contientName, handlerContientForms, setIDContinent } = props;
+export default function SeasonList(props: Props) {
+  const { seasonName, handlerForms, setSeasonID } = props;
   const handlerCallBack = (id: string) => {
-    handlerContientForms();
-    setIDContinent(id);
+    handlerForms();
+    setSeasonID(id);
   };
-  const fetcher = async (url: string, contientName: string) => {
-    return await axiosClient
-      .get(url)
-      .then((res) => res.data.data)
-      .catch((error) => {
-        if (error.response.status !== 200) throw error;
-      });
-  };
-
-  const { data } = useSWR<[ContinentRes]>(`/continent`, fetcher);
+  const { data } = useSeason();
 
   return (
     <Table responsive bordered hover>
@@ -37,22 +27,46 @@ export default function ContinentList(props: Props) {
           <th>
             <THSort name="ID">#</THSort>
           </th>
-          <th>Contient Name</th>
+          <th>Season Short Name</th>
+          <th>Season Full Name</th>
+          <th>Season Logo</th>
+          <th>Season Logo Description</th>
+          <th>Season Logo Title</th>
+          <th>Season Logo caption</th>
           <th aria-label="Action" />
         </tr>
       </thead>
       <tbody>
-        {data?.map((continent) => (
-          <tr key={continent.continentID}>
-            <td>{continent.continentID}</td>
-            <td>{continent.continentName}</td>
+        {data?.map((season) => (
+          <tr key={season.seasonID}>
+            <td>{season.seasonID}</td>
+            <td>{season.shortName}</td>
+            <td>{season.fullName}</td>
+
+            <td>
+              <div
+                className="position-relative mx-auto"
+                style={{ width: "70px", height: "70px" }}
+              >
+                <Image
+                  fill
+                  style={{ objectFit: "contain" }}
+                  alt={season.altLogoSeason}
+                  sizes="5vw"
+                  src={season.logo}
+                />
+              </div>
+            </td>
+            <td>{season.altLogoSeason}</td>
+            <td>{season.titleLogoSeason}</td>
+            <td>{season.captionLogoSeason}</td>
             <td>
               <Dropdown align="end">
                 <Dropdown.Toggle
                   as="button"
                   bsPrefix="btn"
                   className="btn-link rounded-0 text-black-50 shadow-none p-0"
-                  id={`action-${continent.continentID}`}
+                  id={`action-${season.seasonID}`}
                 >
                   <FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
                 </Dropdown.Toggle>
@@ -60,7 +74,7 @@ export default function ContinentList(props: Props) {
                   <Dropdown.Item href="#">Info</Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => {
-                      handlerCallBack(continent.continentID);
+                      handlerCallBack(season.seasonID);
                     }}
                   >
                     Edit

@@ -1,9 +1,9 @@
 import { axiosClient } from "api-client/axios-client";
-import { ContinentRes } from "models/apiWapper/continent";
+import { TournamentRes } from "models/apiWapper/tournament";
 import useSWR from "swr";
 
-function useContinent() {
-  const fetcher = async (url: string) => {
+function useTournament() {
+  const fetcher = async (url: string, contientName: string) => {
     return await axiosClient
       .get(url)
       .then((res) => res.data.data)
@@ -11,14 +11,12 @@ function useContinent() {
         if (error.response.status !== 200) throw error;
       });
   };
-  const { data, isLoading, error } = useSWR<[ContinentRes]>(
-    `/continent`,
-    fetcher
-  );
+
+  const { data, isLoading, error } = useSWR<[TournamentRes]>(`/tour`, fetcher);
   return {
     data: data,
     isLoading,
     isError: error,
   };
 }
-export default useContinent;
+export default useTournament;
