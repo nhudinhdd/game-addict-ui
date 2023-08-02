@@ -2,8 +2,10 @@ import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { axiosClient } from "api-client/axios-client";
 import THSort from "components/table/headerTableSort";
+import { MetaDataList } from "models/apiWapper/common";
 import { PlayerTeamRes } from "models/apiWapper/playerTeam";
 import Image from "next/image";
+import { useEffect } from "react";
 import { Dropdown, Table } from "react-bootstrap";
 import useSWR from "swr";
 
@@ -12,21 +14,28 @@ type Props = {
   teamID?: string;
   handlerForms: () => void;
   updateID: (playerTeamID: string, playerID: string, teamID: string) => void;
+  setTotalPage: (totalPage: number) => void;
+  page?: number;
 };
 
 export default function PlayerTeamList(props: Props) {
-  const { playerID, teamID, handlerForms, updateID } = props;
+  const { playerID, teamID, handlerForms, updateID, page, setTotalPage } =
+    props;
   const fetcher = async (url: string) => {
     return await axiosClient
       .get(url)
-      .then((res) => res.data.data)
+      .then((res) => res.data)
       .catch((error) => {
         if (error.response.status !== 200) throw error;
       });
   };
-  const getNationUrl = `/player-team?player-id=${playerID}&team-id=${teamID}`;
-  const { data } = useSWR<[PlayerTeamRes]>(getNationUrl, fetcher);
-
+  const getNationUrl = `/player-team?player-id=${playerID}&team-id=${teamID}&page=${
+    page - 1
+  }`;
+  const { data } = useSWR<MetaDataList<PlayerTeamRes>>(getNationUrl, fetcher);
+  useEffect(() => {
+    setTotalPage(data ? data.totalPage : 0);
+  }, [data]);
   return (
     <Table responsive bordered hover>
       <thead className="bg-light">
@@ -43,7 +52,7 @@ export default function PlayerTeamList(props: Props) {
         </tr>
       </thead>
       <tbody>
-        {data?.map((i) => (
+        {data?.data?.map((i) => (
           <tr key={i.playerTeamID}>
             <td>{i.playerTeamID}</td>
             <td>{i.playerInfoRes.firstName}</td>

@@ -26,7 +26,7 @@ export function TeamSelect(props: TeamSelectProps) {
       keyName="teamID"
       keyValue="teamName"
       isDataList={false}
-      selectName="Team"
+      selectNameHeader="Team"
       defaultValue={teamIdDefault}
     ></SelectBar>
   );

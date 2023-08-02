@@ -30,6 +30,8 @@ export default function SeasonList(props: Props) {
           <th>Season Short Name</th>
           <th>Season Full Name</th>
           <th>Season Logo</th>
+          <th>Season Big Logo</th>
+          <th>Season Background Logo</th>
           <th>Season Logo Description</th>
           <th>Season Logo Title</th>
           <th>Season Logo caption</th>
@@ -54,6 +56,34 @@ export default function SeasonList(props: Props) {
                   alt={season.altLogoSeason}
                   sizes="5vw"
                   src={season.logo}
+                />
+              </div>
+            </td>
+            <td>
+              <div
+                className="position-relative mx-auto"
+                style={{ width: "70px", height: "70px" }}
+              >
+                <Image
+                  fill
+                  style={{ objectFit: "contain" }}
+                  alt={season.bigLogo || "/assets/avatar-default.jpg"}
+                  sizes="5vw"
+                  src={season.bigLogo || "/assets/avatar-default.jpg"}
+                />
+              </div>
+            </td>
+            <td>
+              <div
+                className="position-relative mx-auto"
+                style={{ width: "70px", height: "70px" }}
+              >
+                <Image
+                  fill
+                  style={{ objectFit: "contain" }}
+                  alt={season.altBackgroundLogo || "/assets/avatar-default.jpg"}
+                  sizes="5vw"
+                  src={season.backgroundLogo || "/assets/avatar-default.jpg"}
                 />
               </div>
             </td>

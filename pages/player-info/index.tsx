@@ -7,11 +7,14 @@ import { ContinentSelect } from "components/continent/continentSelect";
 import { NationForm } from "components/nation/nationForm";
 import PlayerInfoList from "components/playerInfo/playerInfoList";
 import { PlayerInfoForm } from "components/playerInfo/playeInfoForm";
+import { PaginationList } from "components/pagination/pagination";
 
 const PlayerInfo: NextPageWithLayout = () => {
   const [isShowContinent, setIsShowContinent] = useState(false);
   const [playerInfoID, setPlayerInfoID] = useState("");
   const [nationID, setNationID] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
   const handlerForms = () => {
     setIsShowContinent(!isShowContinent);
   };
@@ -34,6 +37,13 @@ const PlayerInfo: NextPageWithLayout = () => {
         handlerForms={handlerForms}
         setPlayerInfoID={setPlayerInfoID}
         nationID={nationID}
+        setTotalPage={setTotalPage}
+        page={currentPage}
+      />
+      <PaginationList
+        currentPage={currentPage}
+        totalPage={totalPage}
+        setCurrentPage={setCurrentPage}
       />
     </>
   );

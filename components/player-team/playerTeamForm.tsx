@@ -1,5 +1,4 @@
 import { axiosAuth, axiosClient } from "api-client/axios-client";
-import { ContinentSelect } from "components/continent/continentSelect";
 import { PlayerInfoSelect } from "components/playerInfo/playerInfoSelect";
 import { TeamSelect } from "components/team/teamSelect";
 import { TournamentSelect } from "components/tournament/tournamentSelect";

@@ -11,6 +11,9 @@ interface SeasonFormProps {
 export function SeasonForm(props: SeasonFormProps) {
   const { seasonID, handlerForms } = props;
   const [fileUpload, setFileUpload] = useState(null);
+  const [bigLogo, setBigLogo] = useState(null);
+  const [fileUploadBackgroundLogo, setFileUploadBackgroundLogo] =
+    useState(null);
   const fetcher = async (url: string) => {
     return await axiosClient
       .get(url)
@@ -28,15 +31,31 @@ export function SeasonForm(props: SeasonFormProps) {
     setFileUpload(e.target.files[0]);
   };
 
+  const handlerFileBackgroundLogo = (e) => {
+    setFileUploadBackgroundLogo(e.target.files[0]);
+  };
+
+  const hanlderBigLogo = (e) => {
+    setBigLogo(e.target.files[0]);
+  };
+
   const getFormData = (e) => {
     const values = e.target;
     const formData = new FormData();
     formData.append("shortName", values.shortName.value);
     formData.append("fullName", values.fullName.value);
     formData.append("season-logo", fileUpload);
+    formData.append("season-big-logo", bigLogo);
     formData.append("altLogo", values.altLogo.value);
     formData.append("titleLogo", values.titleLogo.value);
     formData.append("captionLogo", values.captionLogo.value);
+    formData.append("season-background-logo", fileUploadBackgroundLogo);
+    formData.append("altBackgroundLogo", values.altBackgroundLogo.value);
+    formData.append("titleBackgroundLogo", values.titleBackgroundLogo.value);
+    formData.append(
+      "captionBackgroundLogo",
+      values.captionBackgroundLogo.value
+    );
     return formData;
   };
 
@@ -78,7 +97,7 @@ export function SeasonForm(props: SeasonFormProps) {
         onClick={handlerForms}
       >
         <div
-          className="relative w-full max-w-2xl m-auto max-h-full"
+          className="relative w-full max-w-2xl m-auto max-h-full  overflow-auto"
           onClick={(e) => {
             e.stopPropagation();
           }}
@@ -165,6 +184,17 @@ export function SeasonForm(props: SeasonFormProps) {
                         ></input>
                       </div>
                       <div>
+                        <div className="mt-4 flex-col mb-3">
+                          <label className="font-bold">Big Logo</label>
+                        </div>
+                        <input
+                          accept="*"
+                          type="file"
+                          name="attachedFileBigLogo"
+                          onChange={(e) => hanlderBigLogo(e)}
+                        ></input>
+                      </div>
+                      <div>
                         <div className="mt-4 flex-col">
                           <label className="font-bold">Description Logo</label>
                         </div>
@@ -197,6 +227,65 @@ export function SeasonForm(props: SeasonFormProps) {
                             className="border-slate-400 w-full border-solid border-b-2"
                             name="captionLogo"
                             defaultValue={data?.captionLogoSeason}
+                          ></input>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex-col">
+                    <div>
+                      <label className="font-bold">Background Logo *</label>
+                    </div>
+                    <div className="pl-4">
+                      <div>
+                        <input
+                          accept="*"
+                          type="file"
+                          name="attachedFile"
+                          id="fileInputBackground"
+                          onChange={(e) => handlerFileBackgroundLogo(e)}
+                        ></input>
+                      </div>
+                      <div>
+                        <div className="mt-4 flex-col">
+                          <label className="font-bold">
+                            Description Background Logo
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            className="border-slate-400 w-full border-solid border-b-2"
+                            name="altBackgroundLogo"
+                            defaultValue={data?.altBackgroundLogo}
+                          ></input>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="mt-4 flex-col">
+                          <label className="font-bold">
+                            Title Background Logo
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            className="border-slate-400 w-full border-solid border-b-2"
+                            name="titleBackgroundLogo"
+                            defaultValue={data?.titleBackgroundLogo}
+                          ></input>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="mt-4 flex-col">
+                          <label className="font-bold">
+                            Caption Background Logo
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            className="border-slate-400 w-full border-solid border-b-2"
+                            name="captionBackgroundLogo"
+                            defaultValue={data?.captionBackgroundLogo}
                           ></input>
                         </div>
                       </div>

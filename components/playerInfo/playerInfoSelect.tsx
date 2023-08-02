@@ -24,7 +24,7 @@ export function PlayerInfoSelect(props: PlayerInfoSelectProps) {
       keyName="playerID"
       keyValue="lastName"
       isDataList={true}
-      selectName="Player"
+      selectNameHeader="Player"
       defaultValue={playerIdDefault}
     ></SelectBar>
   );

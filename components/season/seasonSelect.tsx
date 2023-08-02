@@ -1,22 +1,20 @@
 import { SelectBar } from "components/select/select";
 import useSeason from "libs/hooks/useSeason";
-import useTrait from "libs/hooks/useTrait";
 import { useEffect, useState } from "react";
 
 interface SeasonSelectProps {
   setSeasonID?: (id: string) => void;
+  defaultID?: string;
 }
-export function TraitSelect(props: SeasonSelectProps) {
-  const { setSeasonID } = props;
+export function SeasonSelect(props: SeasonSelectProps) {
+  const { setSeasonID, defaultID } = props;
   const { data, isLoading } = useSeason();
-  const [valueSelect, setValueSelect] = useState("");
+  const [valueSelect, setValueSelect] = useState(defaultID || "");
+  console.log(defaultID);
 
   useEffect(() => {
-    if (valueSelect) setSeasonID(valueSelect);
-    else {
-      if (!isLoading) setSeasonID(data[0].seasonID);
-    }
-  }, [valueSelect, isLoading]);
+    setSeasonID(valueSelect);
+  }, [valueSelect]);
   if (isLoading) {
     return null;
   }
@@ -27,6 +25,8 @@ export function TraitSelect(props: SeasonSelectProps) {
       keyName="seasonID"
       keyValue="shortName"
       isDataList={false}
+      selectNameHeader="Season"
+      defaultValue={defaultID}
     ></SelectBar>
   );
 }

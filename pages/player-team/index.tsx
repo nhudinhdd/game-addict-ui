@@ -1,3 +1,4 @@
+import { PaginationList } from "components/pagination/pagination";
 import { PlayerTeamForm } from "components/player-team/playerTeamForm";
 import PlayerTeamList from "components/player-team/playerTeamList";
 import { PlayerInfoSelect } from "components/playerInfo/playerInfoSelect";
@@ -16,6 +17,8 @@ const PlayerTeam: NextPageWithLayout = () => {
   const [playerID, setPlayerID] = useState("");
   const [teamID, setTeamID] = useState("");
   const [tourID, setTourID] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
   const updateID = (playerTeamID: string, playerID: string, teamID: string) => {
     setIdDetail(playerTeamID);
     setPlayerIdDefault(playerID);
@@ -51,6 +54,14 @@ const PlayerTeam: NextPageWithLayout = () => {
         playerID={playerID}
         teamID={teamID}
         updateID={updateID}
+        setTotalPage={setTotalPage}
+        page={currentPage}
+      />
+
+      <PaginationList
+        currentPage={currentPage}
+        totalPage={totalPage}
+        setCurrentPage={setCurrentPage}
       />
     </>
   );

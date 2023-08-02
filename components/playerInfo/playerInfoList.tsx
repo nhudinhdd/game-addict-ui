@@ -1,34 +1,45 @@
 import { Dropdown, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import useSWR from "swr";
 import { axiosClient } from "../../api-client/axios-client";
 import { PlayerInfoRes } from "../../models/apiWapper/playerInfo";
 import THSort from "../../components/table/headerTableSort";
+import { MetaDataList } from "models/apiWapper/common";
 
 type Props = {
   nationID?: string;
   handlerForms: () => void;
   setPlayerInfoID: (id: string) => void;
+  setTotalPage: (totalPage: number) => void;
+  page?: number;
 };
 
 export default function PlayerInfoList(props: Props) {
-  const { nationID, handlerForms, setPlayerInfoID } = props;
+  const {
+    nationID = "",
+    handlerForms,
+    setPlayerInfoID,
+    setTotalPage,
+    page,
+  } = props;
   const fetcher = async (url: string, contientName: string) => {
     return await axiosClient
       .get(url)
-      .then((res) => res.data.data)
+      .then((res) => res.data)
       .catch((error) => {
         if (error.response.status !== 200) throw error;
       });
   };
-  const playerInfoUrl = nationID
-    ? `/player-info/nation-id=${nationID}`
-    : "/player-info";
-  const { data } = useSWR<[PlayerInfoRes]>(playerInfoUrl, fetcher);
-
+  const { data } = useSWR<MetaDataList<PlayerInfoRes>>(
+    `/player-info?nation-id=${nationID}&page=${page - 1}`,
+    fetcher
+  );
+  useEffect(() => {
+    setTotalPage(data ? data.totalPage : 0);
+  }, [data]);
   return (
     <Table responsive bordered hover>
       <thead className="bg-light">
@@ -45,7 +56,7 @@ export default function PlayerInfoList(props: Props) {
         </tr>
       </thead>
       <tbody>
-        {data?.map((playerInfo) => (
+        {data?.data?.map((playerInfo) => (
           <tr key={playerInfo.playerID}>
             <td>{playerInfo.playerID}</td>
             <td>{playerInfo.firstName}</td>
